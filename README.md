@@ -97,3 +97,45 @@ curl -X POST http://localhost:8080/api/v1/patients \
 `gender`: MALE/FEMALE/OTHER. Ngày sinh không được trong tương lai. Số điện thoại gồm 9–15 chữ số và có thể bắt đầu bằng `+`; được phép trùng giữa các bệnh nhân. `page` từ 0, `size` từ 1–100, kết quả sắp xếp ID giảm dần. Không tìm thấy trả 404, dữ liệu sai trả 400.
 
 DELETE hiện xóa vật lý vì chưa có hồ sơ khám/chữa. Khi bổ sung lịch sử, phải bổ sung FK hạn chế xóa hoặc chuyển sang ngừng hoạt động để bảo toàn hồ sơ. Hệ số lương trong Doctor mới là ví dụ lưu dữ liệu, chưa tính lương hoặc lưu lịch sử thay đổi hệ số.
+
+## MongoDB chạy cùng SQL
+
+MongoDB là kết nối bổ sung, bật bằng profile `mongo`. Không bật profile này thì ứng dụng không tạo MongoClient/repository MongoDB và vẫn chạy H2/MySQL như trước.
+
+Khởi động MongoDB local bằng Docker (cần Docker đang chạy):
+
+```bash
+docker compose -f compose.mongo.yml up -d
+./mvnw spring-boot:run -Dspring-boot.run.profiles=h2,mongo
+```
+
+Dùng MySQL + MongoDB: thiết lập các biến DB_URL, DB_USERNAME, DB_PASSWORD như phần MySQL, rồi chạy:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql,mongo
+```
+
+Khi chạy JAR: `java -jar target/clinic-management-0.0.1-SNAPSHOT.jar --spring.profiles.active=h2,mongo`.
+Luôn chọn một profile SQL (`h2` hoặc `mysql`) cùng `mongo`, vì bật profile tường minh sẽ thay profile mặc định.
+
+Kết nối mặc định: `mongodb://localhost:27017/clinic_logs?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000`. Ghi đè bằng biến môi trường `MONGODB_URI` cho MongoDB có tài khoản hoặc Atlas; không commit thông tin đăng nhập. Compose này dành cho local, không bật xác thực và chỉ mở cổng trên loopback. Volume giữ dữ liệu khi container dừng.
+
+- `document/ActivityLog.java`: document mẫu trong collection `activity_logs`, ID chuỗi và thời gian tạo tự động.
+- `repository/mongo/ActivityLogRepository.java`: MongoRepository, có truy vấn theo loại và ID tài nguyên.
+- `config/MongoConfig.java`: bật repository và auditing khi profile mongo hoạt động.
+- `config/JpaConfig.java`: quét riêng các repository SQL, loại MongoRepository.
+
+Ví dụ trong service có `@Profile("mongo")`, inject `ActivityLogRepository` rồi gọi:
+
+```java
+ActivityLog log = new ActivityLog();
+log.setAction("CREATE");
+log.setResourceType("PATIENT");
+log.setResourceId("1");
+log.setActor("demo");
+activityLogRepository.save(log);
+```
+
+Đây là mẫu lưu độc lập, chưa tự động ghi log từ PatientService và chưa có API log. MongoDB tạo database/collection khi ghi lần đầu. Ứng dụng khởi động không chứng minh MongoDB đã kết nối được; health API hiện chỉ kiểm tra liveness. Kiểm tra MongoDB local bằng `docker compose -f compose.mongo.yml exec mongodb mongosh --quiet --eval 'db.adminCommand("ping")'`.
+
+Transaction JPA không bao phủ MongoDB. Nếu cần ghi SQL và log nhất quán, bổ sung outbox/retry theo nghiệp vụ. Cách tách repository dựa theo [hướng dẫn Spring Boot](https://docs.spring.io/spring-boot/how-to/data-access.html).

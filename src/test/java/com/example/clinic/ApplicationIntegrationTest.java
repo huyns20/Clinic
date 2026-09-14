@@ -15,6 +15,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ApplicationIntegrationTest {
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private org.springframework.context.ApplicationContext context;
+
+    @Test
+    void mongoIsDisabledWithoutProfile() {
+        org.assertj.core.api.Assertions.assertThat(
+                context.getBeansOfType(com.mongodb.client.MongoClient.class)).isEmpty();
+        org.assertj.core.api.Assertions.assertThat(
+                context.getBeansOfType(com.example.clinic.repository.mongo.ActivityLogRepository.class)).isEmpty();
+    }
+
 
     @Test
     void healthEndpointWorks() throws Exception {

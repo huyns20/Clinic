@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/clinic_logs?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000}
+      auto-index-creation: false
