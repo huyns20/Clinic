@@ -4,7 +4,7 @@ Bộ khung RESTful API quản lý phòng khám tư nhân cho Đề tài 4. Có n
 
 ## Công nghệ
 
-Java 17+, Spring Boot 3.5.16, Maven 3.9.9 (Wrapper), Spring Web, Spring Data JPA, Jakarta Validation, Lombok, H2/MySQL, springdoc OpenAPI 2.8.9.
+Java 17+, Spring Boot 3.5.16, Maven 3.9.9 (Wrapper), Spring Web, Spring Data JPA, Jakarta Validation, Lombok, H2/PostgreSQL, springdoc OpenAPI 2.8.9.
 
 Spring Boot 3.5 hỗ trợ Java 17–25: https://docs.spring.io/spring-boot/3.5/system-requirements.html
 Ma trận tương thích springdoc: https://springdoc.org/v2/
@@ -35,19 +35,30 @@ java -jar target/clinic-management-0.0.1-SNAPSHOT.jar
 
 Đổi cổng: `SERVER_PORT=8081 ./mvnw spring-boot:run`.
 
-## Chạy với MySQL
+## Chạy với PostgreSQL
 
-Tạo database `clinic_db` với charset `utf8mb4`, tạo user có quyền trên database này, rồi cấu hình:
+Cài và khởi động PostgreSQL. Kết nối bằng tài khoản quản trị (ví dụ `psql -U postgres`), rồi tạo user và database:
+
+```sql
+CREATE USER clinic WITH PASSWORD 'your-local-password';
+CREATE DATABASE clinic_db OWNER clinic ENCODING 'UTF8';
+```
+
+Cấu hình ứng dụng (mật khẩu phải khớp với user vừa tạo):
 
 ```bash
-export SPRING_PROFILES_ACTIVE=mysql
-export DB_URL='jdbc:mysql://localhost:3306/clinic_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC'
+export SPRING_PROFILES_ACTIVE=postgres
+export DB_URL='jdbc:postgresql://localhost:5432/clinic_db'
 export DB_USERNAME=clinic
 export DB_PASSWORD='your-local-password'
 ./mvnw spring-boot:run
 ```
 
-MySQL cần được cài và khởi động riêng. Profile MySQL dùng `ddl-auto=update` phục vụ phát triển. Khi triển khai thực tế, bổ sung migration và đặt `DB_DDL_AUTO=validate`. File `.env` không được tự động nạp bởi Spring Boot; dùng biến môi trường hoặc cấu hình IDE. Không commit mật khẩu.
+PostgreSQL cần được cài và khởi động riêng. Profile PostgreSQL dùng `ddl-auto=update` phục vụ phát triển. Khi triển khai thực tế, bổ sung migration và đặt `DB_DDL_AUTO=validate`. File `.env` không được tự động nạp bởi Spring Boot; dùng biến môi trường hoặc cấu hình IDE. Không commit mật khẩu.
+
+Trong IDE, đặt `SPRING_PROFILES_ACTIVE=postgres`, `DB_USERNAME=clinic` và `DB_PASSWORD` trong biến môi trường của Run Configuration. `DB_URL` mặc định là `jdbc:postgresql://localhost:5432/clinic_db`.
+
+Profile mặc định vẫn là `h2` để chạy thử và kiểm thử. Profile `postgres` kết nối database PostgreSQL riêng; cấu hình này không tự chuyển dữ liệu đang có từ MySQL sang PostgreSQL.
 
 ## Cấu trúc
 
@@ -100,7 +111,7 @@ DELETE hiện xóa vật lý vì chưa có hồ sơ khám/chữa. Khi bổ sung 
 
 ## MongoDB chạy cùng SQL
 
-MongoDB là kết nối bổ sung, bật bằng profile `mongo`. Không bật profile này thì ứng dụng không tạo MongoClient/repository MongoDB và vẫn chạy H2/MySQL như trước.
+MongoDB là kết nối bổ sung, bật bằng profile `mongo`. Không bật profile này thì ứng dụng không tạo MongoClient/repository MongoDB và vẫn chạy H2/PostgreSQL như trước.
 
 Khởi động MongoDB local bằng Docker (cần Docker đang chạy):
 
@@ -109,14 +120,14 @@ docker compose -f compose.mongo.yml up -d
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2,mongo
 ```
 
-Dùng MySQL + MongoDB: thiết lập các biến DB_URL, DB_USERNAME, DB_PASSWORD như phần MySQL, rồi chạy:
+Dùng PostgreSQL + MongoDB: thiết lập các biến DB_URL, DB_USERNAME, DB_PASSWORD như phần PostgreSQL, rồi chạy:
 
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=mysql,mongo
+./mvnw spring-boot:run -Dspring-boot.run.profiles=postgres,mongo
 ```
 
 Khi chạy JAR: `java -jar target/clinic-management-0.0.1-SNAPSHOT.jar --spring.profiles.active=h2,mongo`.
-Luôn chọn một profile SQL (`h2` hoặc `mysql`) cùng `mongo`, vì bật profile tường minh sẽ thay profile mặc định.
+Luôn chọn một profile SQL (`h2` hoặc `postgres`) cùng `mongo`, vì bật profile tường minh sẽ thay profile mặc định.
 
 Kết nối mặc định: `mongodb://localhost:27017/clinic_logs?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000`. Ghi đè bằng biến môi trường `MONGODB_URI` cho MongoDB có tài khoản hoặc Atlas; không commit thông tin đăng nhập. Compose này dành cho local, không bật xác thực và chỉ mở cổng trên loopback. Volume giữ dữ liệu khi container dừng.
 
