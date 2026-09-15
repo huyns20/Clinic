@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/clinic_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/clinic_db}
     username: ${DB_USERNAME:clinic}
     password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: ${DB_DDL_AUTO:update}
