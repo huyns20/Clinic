@@ -1,0 +1,41 @@
+1. Các tính năng curl master data
+	+ thêm/xoá/sửa/tìm kiếm các đối tượng trong hệ thống như
+		bác sỹ, chưa có
+		y tá, chưa có
+		bệnh nhân,
+		thuốc v.v. chưa có
+		=> với các ràng buộc như nêu trong yêu cầu về CSDL.
+	comment: CRUD:
+		Bác sỹ,y tá, danh mục các bệnh, thuốc, thiết bị y tế, dịch vụ y tế y khoa , phòng khám, giường bệnh => đây coi là các master data, có đầy đủ các tính năng master data này
+
+trong chi tiết bệnh nhân cho phép xem thêm
+* Hiển thị thông tin của một bệnh nhân nào đó cùng với tất cả các thông tin khám chữa bệnh của họ từ trước đến nay.
+	+ Thông tin về tình trạng bệnh của họ tại thời điểm hiện tại
+		+ mắc những bệnh gì,
+		+ khám lần thứ mấy cho mỗi bệnh,…),
+		+ cùng tổng chi phí (khám bệnh, chữa bệnh, thuốc, nguyên vật liệu khám/chữa,…) cho mỗi lần khám hoặc chữa bệnh.
+
+2. trong tính năng báo cáo thêm các tính năng
+
+2.1: Liệt kê danh sách các loại bệnh được các bệnh nhân mắc phải trong một tháng nào đó
+	+ các bệnh được sắp xếp theo thứ tự số bệnh nhân đến khám giảm dần
+	=> Lưu ý, một bệnh nhân có thể
+		+ đến khám/chữa một bệnh nào đó nhiều lần
+		+ trong khoảng thời gian đó nhưng cũng chỉ được tính là mắc một lần nếu như các lần khám/chữa bệnh đó là liên tiếp nhau.
+		+ Trong CSDL phải thể hiện được là một bệnh nhân có thể mắc lại bệnh nào đó nhiều lần (chữa khỏi, một thời gian sau lại mắc bệnh lại),
+			=> khi đó sẽ được tính là mắc nhiều lần.
+2.2:
+* Tính Doanh thu của Phòng khám dựa trên
+	+ số tiền khám/chữa bệnh của các bệnh nhân
+	+ số tiền bán thuốc trên các đơn thuốc
+	+ các dịch vụ y tế kèm theo việc khám/chữa bệnh
+	+ tiền thiết bị y tế/cơ sở vật chất thu từ bệnh nhân,...
+
+3. Thêm tính năng:
+* Tính lương của các
+	+ Bác sỹ
+	+ y tá
+	=> trong tháng tính đến thời điểm hiện tại, hoặc một tháng cụ thể nào đó với cách tính như sau:
+	+ Lương cơ bản cho BS và Y tá theo hệ số lương của Nhà nước.
+	+ Cứ mỗi bệnh nhân đến khám và chữa khỏi một bệnh (kết thúc một chuỗi khám/chữa bệnh nhiều lần liên tiếp cho bệnh đó) bởi một bác sỹ thì bác sỹ đó được cộng thêm 1 triệu đồng.
+	+ Mỗi lần một y tá thực hiện hỗ trợ một bệnh nhân trong một lần đến khám/chữa bệnh thì được cộng thêm 200 nghìn đồng.

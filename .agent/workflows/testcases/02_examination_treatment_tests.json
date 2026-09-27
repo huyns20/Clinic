@@ -1,0 +1,33 @@
+{
+  "suite": "Examination & Treatment Workflow Tests",
+  "cases": [
+    {
+      "id": "TC-EXAM-001",
+      "name": "GET /api/v1/khoa - Lấy danh mục khoa điều trị",
+      "method": "GET",
+      "endpoint": "/api/v1/khoa",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-EXAM-002",
+      "name": "GET /api/v1/bac-sy - Lấy danh sách bác sĩ",
+      "method": "GET",
+      "endpoint": "/api/v1/bac-sy",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-EXAM-003",
+      "name": "GET /api/v1/dot-dieu-tri - Lấy danh sách đợt điều trị",
+      "method": "GET",
+      "endpoint": "/api/v1/dot-dieu-tri",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-EXAM-004",
+      "name": "GET /api/v1/giuong-benh/trong - Lấy danh sách giường trống",
+      "method": "GET",
+      "endpoint": "/api/v1/giuong-benh/trong",
+      "expectedStatus": 200
+    }
+  ]
+}

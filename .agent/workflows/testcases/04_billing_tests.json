@@ -1,0 +1,26 @@
+{
+  "suite": "Billing & Financial Statistics Tests",
+  "cases": [
+    {
+      "id": "TC-BILL-001",
+      "name": "GET /api/v1/hoa-don - Danh sách hóa đơn viện phí",
+      "method": "GET",
+      "endpoint": "/api/v1/hoa-don",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-BILL-002",
+      "name": "GET /api/v1/thong-ke/tong-quan - Thống kê KPI Dashboard",
+      "method": "GET",
+      "endpoint": "/api/v1/thong-ke/tong-quan",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-BILL-003",
+      "name": "GET /api/v1/thong-ke/doanh-thu-khoa - Thống kê doanh thu theo khoa",
+      "method": "GET",
+      "endpoint": "/api/v1/thong-ke/doanh-thu-khoa",
+      "expectedStatus": 200
+    }
+  ]
+}

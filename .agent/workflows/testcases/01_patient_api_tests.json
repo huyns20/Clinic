@@ -1,0 +1,26 @@
+{
+  "suite": "Patient & Reception Module Tests",
+  "cases": [
+    {
+      "id": "TC-PAT-001",
+      "name": "GET /api/v1/benh-nhan - Danh sách bệnh nhân phân trang",
+      "method": "GET",
+      "endpoint": "/api/v1/benh-nhan",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-PAT-002",
+      "name": "GET /api/v1/benh-nhan/BN001 - Chi tiết hồ sơ bệnh nhân BN001",
+      "method": "GET",
+      "endpoint": "/api/v1/benh-nhan/BN001",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-PAT-003",
+      "name": "GET /api/v1/benh-nhan/NONEXIST - Bắt lỗi 404 khi không tìm thấy",
+      "method": "GET",
+      "endpoint": "/api/v1/benh-nhan/NONEXIST",
+      "expectedStatus": 404
+    }
+  ]
+}

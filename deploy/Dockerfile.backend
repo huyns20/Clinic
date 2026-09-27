@@ -1,0 +1,38 @@
+# ========================================================
+# Dockerfile Backend Java 17 + Spring Boot 3
+# Tối ưu siêu tốc với BuildKit Cache Mount (Maven Cache)
+# ========================================================
+# syntax=docker/dockerfile:1
+
+# Stage 1: Build mã nguồn Java với cache dependency
+FROM maven:3.9.9-eclipse-temurin-17-alpine AS builder
+WORKDIR /app
+
+# Cache Maven .m2 giữa các lần build để không phải tải lại dependencies
+COPY pom.xml .
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:resolve -B
+
+# Copy mã nguồn backend và đóng gói JAR
+COPY src ./src
+RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -B
+
+# Stage 2: Runtime Image siêu nhẹ
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+# Cài đặt curl để hỗ trợ docker healthcheck
+RUN apk add --no-cache curl
+
+# Copy file jar từ builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+ENV SERVER_PORT=8080 \
+    DB_HOST=postgres \
+    DB_PORT=5432 \
+    DB_NAME=phong_kham2 \
+    DB_USER=postgres \
+    DB_PASSWORD=123456
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

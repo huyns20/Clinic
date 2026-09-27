@@ -1,0 +1,14 @@
+services:
+  phongkham_db:
+    image: postgres:latest
+    container_name: phongkham_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=phongkham_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Đường dẫn tương đối: thư mục 'data' cùng cấp với file docker-compose.yml
+      - ./data:/var/lib/postgresql
+    restart: always

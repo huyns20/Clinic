@@ -1,0 +1,26 @@
+{
+  "suite": "Pharmacy & Medicine Inventory Tests",
+  "cases": [
+    {
+      "id": "TC-PHARM-001",
+      "name": "GET /api/v1/thuoc - Lấy toàn bộ danh mục thuốc và tồn kho",
+      "method": "GET",
+      "endpoint": "/api/v1/thuoc",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-PHARM-002",
+      "name": "GET /api/v1/thuoc/canh-bao-ton - Cảnh báo thuốc sắp hết",
+      "method": "GET",
+      "endpoint": "/api/v1/thuoc/canh-bao-ton",
+      "expectedStatus": 200
+    },
+    {
+      "id": "TC-PHARM-003",
+      "name": "GET /api/v1/thuoc/T001 - Chi tiết thuốc T001",
+      "method": "GET",
+      "endpoint": "/api/v1/thuoc/T001",
+      "expectedStatus": 200
+    }
+  ]
+}
